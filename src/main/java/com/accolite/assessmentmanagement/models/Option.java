@@ -10,6 +10,8 @@ import java.util.Objects;
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Option {
 
+//    TODO: Add support fot patching and authorization from user
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

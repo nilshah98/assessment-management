@@ -5,10 +5,7 @@ import com.accolite.assessmentmanagement.models.Question;
 import com.accolite.assessmentmanagement.repository.OptionRepository;
 import com.accolite.assessmentmanagement.repository.QuestionRepository;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,4 +34,10 @@ public class QuestionResource {
         question.addOptions(question.getOptions());
         return questionRepository.save(question);
     }
+
+    @PutMapping("/test/api/question/{id}")
+    public void editQuestion(@RequestBody Question question, @PathVariable Long id){
+//        TODO: Only allow authorized users to make changes to question
+    }
+
 }

@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Question {
+
+//    TODO: Refer question to user
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,6 +20,9 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = { CascadeType.ALL })
     private List<Option> options;
+
+    @ManyToMany(mappedBy = "Questions")
+    private Set<Quiz> quizes;
 
     private String description;
     private Integer correctOption;
@@ -63,6 +69,14 @@ public class Question {
 
     public void addOptions(List<Option> options){
         for (Option o: options) { o.setQuestion(this);}
+    }
+
+    public Set<Quiz> getQuizes() {
+        return quizes;
+    }
+
+    public void setQuizes(Set<Quiz> quizes) {
+        this.quizes = quizes;
     }
 
     @Override

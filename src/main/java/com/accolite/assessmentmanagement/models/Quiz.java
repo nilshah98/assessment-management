@@ -4,26 +4,34 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-public class Course {
+public class Quiz {
+
+//    TODO: Refer quiz to user
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy =  GenerationType.AUTO)
     private Long id;
+
+    @ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+            name = "quiz_questions",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id"))
+    private Set<Question> Questions;
 
     private String title;
     private String description;
 
-    @ManyToOne
-    private User user;
-
-    public Course() {
+    public Quiz() {
     }
 
-    public Course(String title, String description){
+    public Quiz(String title, String description){
         this.title = title;
         this.description = description;
     }
@@ -34,6 +42,14 @@ public class Course {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Question> getQuestions() {
+        return Questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        Questions = questions;
     }
 
     public String getTitle() {
@@ -52,20 +68,12 @@ public class Course {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Course course = (Course) o;
-        return id == course.id;
+        Quiz quiz = (Quiz) o;
+        return id.equals(quiz.id);
     }
 
     @Override
@@ -75,7 +83,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Course{" +
+        return "Quiz{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
