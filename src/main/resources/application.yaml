@@ -6,3 +6,10 @@ spring:
           google:
             clientId: 774521275942-mla6dhlapk40h47rr56fc2tadcin3br8.apps.googleusercontent.com
             clientSecret: z081TxVKmBFeIInbNSShtHlR
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/assessment?serverTimezone=UTC
+    username: neel
+    password: alskdjfh123!
