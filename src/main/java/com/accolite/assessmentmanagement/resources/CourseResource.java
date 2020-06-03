@@ -3,12 +3,11 @@ package com.accolite.assessmentmanagement.resources;
 import com.accolite.assessmentmanagement.models.Course;
 import com.accolite.assessmentmanagement.repository.CourseRepository;
 import com.accolite.assessmentmanagement.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,5 +38,28 @@ public class CourseResource {
         System.out.println((userRepository.findById((String) principal.getAttribute("sub"))).get());
         course.setUser((userRepository.findById((String) principal.getAttribute("sub"))).get());
         return courseRepository.save(course);
+    }
+
+    @PutMapping("/api/course/{id}")
+    public ResponseEntity<?> editCourse(@RequestBody Course course, @AuthenticationPrincipal OAuth2User principal){
+        System.out.println("Hit");
+        String userId = (String) principal.getAttribute("sub");
+        if(!course.getUser().getId().equals(userId)){
+            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }else{
+            return new ResponseEntity<>(courseRepository.save(course), HttpStatus.OK);
+        }
+    }
+
+    @DeleteMapping("/api/course/{id}")
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal){
+        String userId = (String) principal.getAttribute("sub");
+        Course course = courseRepository.findById(id).get();
+        if(!course.getUser().getId().equals(userId)){
+            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }else{
+            courseRepository.deleteById(id);
+            return new ResponseEntity<String>("Successful", HttpStatus.OK);
+        }
     }
 }

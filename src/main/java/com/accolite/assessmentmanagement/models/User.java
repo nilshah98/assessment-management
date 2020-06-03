@@ -1,6 +1,7 @@
 package com.accolite.assessmentmanagement.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.Entity;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class User {
 
     @Id
@@ -19,7 +19,11 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Course> courses;
+
+    @OneToMany(mappedBy = "user")
+    private List<Result> results;
 
     public User() {
     }
@@ -28,6 +32,14 @@ public class User {
         this.id = id;
         this.name = name;
         this.email = email;
+    }
+
+    public List<Result> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Result> results) {
+        this.results = results;
     }
 
     public String getId() {
@@ -82,6 +94,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", courses=" + courses +
+                ", results=" + results +
                 '}';
     }
 }

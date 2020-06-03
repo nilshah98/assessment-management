@@ -35,7 +35,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
                     httpServletResponse.setStatus(HttpServletResponse.SC_OK);
                 }).and()
-                .oauth2Login().defaultSuccessUrl("/");
+                .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
         // @formatter:on
     }
 }

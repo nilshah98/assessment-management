@@ -33,7 +33,8 @@ public class QuizResource {
         return quizRepository.save(quiz);
     }
 
-    @PutMapping(value = "/test/api/quiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    Currently not allowing to change a quiz once made
+//    @PutMapping(value = "/test/api/quiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Quiz editQuiz(@RequestBody Map<String, Object> body, @PathVariable Long id){
 
 //        Extract all question Ids

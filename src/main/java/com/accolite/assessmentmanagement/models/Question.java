@@ -1,6 +1,7 @@
 package com.accolite.assessmentmanagement.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Question {
 
 //    TODO: Refer question to user
@@ -22,6 +22,7 @@ public class Question {
     private List<Option> options;
 
     @ManyToMany(mappedBy = "Questions")
+    @JsonIgnore
     private Set<Quiz> quizes;
 
     private String description;

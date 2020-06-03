@@ -1,31 +1,32 @@
 package com.accolite.assessmentmanagement.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Course {
+public class Result {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String title;
-    private String description;
+//    Not linking to quiz here, since don't need all quiz details
+    private Long quizId;
+    private Long score;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
-    public Course() {
+    public Result(){
+
     }
 
-    public Course(String title, String description){
-        this.title = title;
-        this.description = description;
+    public Result(Long quizId, Long score){
+        this.quizId = quizId;
+        this.score = score;
     }
 
     public Long getId() {
@@ -36,20 +37,20 @@ public class Course {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public Long getQuizId() {
+        return quizId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setQuizId(Long quizId) {
+        this.quizId = quizId;
     }
 
-    public String getDescription() {
-        return description;
+    public Long getScore() {
+        return score;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setScore(Long score) {
+        this.score = score;
     }
 
     public User getUser() {
@@ -64,8 +65,8 @@ public class Course {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Course course = (Course) o;
-        return id == course.id;
+        Result result = (Result) o;
+        return id.equals(result.id);
     }
 
     @Override
@@ -75,10 +76,11 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Course{" +
+        return "Result{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
+                ", quizId=" + quizId +
+                ", score=" + score +
+                ", user=" + user +
                 '}';
     }
 }

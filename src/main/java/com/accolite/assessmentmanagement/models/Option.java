@@ -1,13 +1,13 @@
 package com.accolite.assessmentmanagement.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Option {
 
 //    TODO: Add support fot patching and authorization from user
@@ -17,6 +17,7 @@ public class Option {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private Question question;
 
     private String data;
