@@ -15,6 +15,7 @@ public class Result {
 //    Not linking to quiz here, since don't need all quiz details
     private Long quizId;
     private Long score;
+    private Long total;
 
     @ManyToOne
     @JsonIgnore
@@ -24,9 +25,18 @@ public class Result {
 
     }
 
-    public Result(Long quizId, Long score){
+    public Result(Long quizId, Long score, Long total){
         this.quizId = quizId;
         this.score = score;
+        this.total = total;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
     }
 
     public Long getId() {
