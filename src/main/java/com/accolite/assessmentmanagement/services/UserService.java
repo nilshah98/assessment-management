@@ -6,11 +6,12 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-@Component
+@Service
 public class UserService extends OidcUserService {
 
     private final UserRepository userRepository;
@@ -20,6 +21,7 @@ public class UserService extends OidcUserService {
     }
 
     @Override
+    @Transactional
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
 
         System.out.println("INSIDE");
@@ -42,5 +44,10 @@ public class UserService extends OidcUserService {
         System.out.println("HOOKED");
 
         return oAuth2User;
+    }
+
+    @Transactional
+    public User getUserById(String userId){
+        return userRepository.findById(userId).get();
     }
 }
