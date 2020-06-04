@@ -1,69 +1,40 @@
 package com.accolite.assessmentmanagement.resources;
 
-import com.accolite.assessmentmanagement.models.Question;
 import com.accolite.assessmentmanagement.models.Quiz;
-import com.accolite.assessmentmanagement.repository.QuestionRepository;
-import com.accolite.assessmentmanagement.repository.QuizRepository;
-import org.springframework.http.MediaType;
+import com.accolite.assessmentmanagement.services.QuizService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 public class QuizResource {
 
-    private QuizRepository quizRepository;
-    private QuestionRepository questionRepository;
+    private final QuizService quizService;
 
-    public QuizResource(QuizRepository quizRepository, QuestionRepository questionRepository){
-        this.quizRepository = quizRepository;
-        this.questionRepository = questionRepository;
+    public QuizResource(QuizService quizService){
+        this.quizService = quizService;
     }
 
-    @GetMapping("/test/api/quizes")
+    @GetMapping("/api/quizes")
     public List<Quiz> getQuizes(){
-        return StreamSupport.stream(quizRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return  quizService.getAllQuizes();
     }
 
-    @PostMapping("/test/api/quiz")
+    @PostMapping("/api/quiz")
     public Quiz saveQuiz(@RequestBody Quiz quiz){
-        return quizRepository.save(quiz);
+        return quizService.saveQuiz(quiz);
     }
 
 //    Currently not allowing to change a quiz once made
-//    @PutMapping(value = "/test/api/quiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Quiz editQuiz(@RequestBody Map<String, Object> body, @PathVariable Long id){
+//    @PutMapping("/api/quiz/{quizId}/add/questions")
+//    public Quiz addQuestions(@RequestBody List <Question> questions, @PathVariable Long quizId){
+//        return quizService.addQuestions(questions, quizId);
+//    }
 
-//        Extract all question Ids
-        List<HashMap<String, Long>> Qids = (List<HashMap<String, Long>>) body.get("questions");
-
-//        Extract questions
-        Set<Question> questionsToAdd = new HashSet<Question>();
-        for (HashMap<String, Long> e: Qids) {
-            Long qid = ((Number) e.get("id")).longValue();
-            questionsToAdd.add(questionRepository.findById(qid).get());
-        }
-
-//        Get Current Quiz
-        Quiz currQuiz = quizRepository.findById(id).get();
-
-//        Get existing questions
-        Set<Question> currQuestions = currQuiz.getQuestions();
-
-//        Merge questionsToAdd to currQuestions
-        for (Question q: questionsToAdd) { currQuestions.add(q); }
-
-//        Make changes to currQuiz
-        currQuiz.setTitle((String) body.get("title"));
-        currQuiz.setDescription((String) body.get("description"));
-        currQuiz.setQuestions(currQuestions);
-
-        return quizRepository.save(currQuiz);
-
-//        TODO: Only allow authorized users to make changes to quiz
-    }
+//    @PutMapping("/api/quiz/{quizId}/add/questions/id")
+//    public void addQuestionsById(@RequestBody List<Long> qids, @PathVariable Long quizId){
+//        System.out.println(qids);
+//        System.out.println(quizId);
+//    }
 
 }
