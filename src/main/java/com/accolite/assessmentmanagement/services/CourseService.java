@@ -62,16 +62,16 @@ public class CourseService {
         return addUserSaveCourse(user, course);
     }
 
-    public Course checkUserByIdSaveCourse(String userId, Course course){
+    public Course checkUserByIdSaveCourse(String userId, Course course) throws UnAuthorizedAccessException {
         log.info("[-- OP] checkUserByIdSaveCourse");
-        if(course.getUser().getId().equals(userId)) return this.saveCourse(course);
-//        Ideally should throw error here, returning empty course for now
-        else return new Course();
+        if(!course.getUser().getId().equals(userId)) throw new UnAuthorizedAccessException("User does not have access to this Course");
+        return this.saveCourse(course);
     }
 
-    public void checkUserByIdDeleteCourseById(String userId, Long courseId){
+    public void checkUserByIdDeleteCourseById(String userId, Long courseId) throws UnAuthorizedAccessException{
         log.info("[-- OP] checkUserByIdDeleteCourseById");
         Course course = this.getCourseById(courseId);
-        if(course.getUser().getId().equals(userId)) this.deleteCourseById(courseId);
+        if(!course.getUser().getId().equals(userId)) throw new UnAuthorizedAccessException("User does not have access to this Course");
+        this.deleteCourseById(courseId);
     }
 }
