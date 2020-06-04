@@ -4,10 +4,7 @@ import com.accolite.assessmentmanagement.models.Question;
 import com.accolite.assessmentmanagement.models.Quiz;
 import com.accolite.assessmentmanagement.models.Result;
 import com.accolite.assessmentmanagement.models.User;
-import com.accolite.assessmentmanagement.repository.QuestionRepository;
-import com.accolite.assessmentmanagement.repository.QuizRepository;
 import com.accolite.assessmentmanagement.repository.ResultRepository;
-import com.accolite.assessmentmanagement.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

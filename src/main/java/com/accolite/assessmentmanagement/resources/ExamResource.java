@@ -1,19 +1,13 @@
 package com.accolite.assessmentmanagement.resources;
 
-import com.accolite.assessmentmanagement.models.*;
-import com.accolite.assessmentmanagement.repository.QuestionRepository;
-import com.accolite.assessmentmanagement.repository.QuizRepository;
-import com.accolite.assessmentmanagement.repository.ResultRepository;
-import com.accolite.assessmentmanagement.repository.UserRepository;
+import com.accolite.assessmentmanagement.models.Quiz;
+import com.accolite.assessmentmanagement.models.Result;
 import com.accolite.assessmentmanagement.services.ExamService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.List;
 
 @RestController
 public class ExamResource {
