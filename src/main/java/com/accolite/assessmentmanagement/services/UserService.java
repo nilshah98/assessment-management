@@ -24,7 +24,6 @@ public class UserService extends OidcUserService {
     @Transactional
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
 
-        System.out.println("INSIDE");
         OidcUser oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
@@ -32,16 +31,9 @@ public class UserService extends OidcUserService {
         String name = (String) attributes.get("name");
         String sub = (String) attributes.get("sub");
 
-        if(userRepository.findById(sub).isPresent()){
-            System.out.println("User Present");
-        }
-        else{
+        if(!userRepository.findById(sub).isPresent()){
             userRepository.save(new User(sub, name, email));
-            System.out.println("User saved");
         }
-
-        System.out.println(email);
-        System.out.println("HOOKED");
 
         return oAuth2User;
     }

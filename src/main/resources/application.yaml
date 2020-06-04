@@ -13,3 +13,8 @@ spring:
     url: jdbc:mysql://localhost:3306/assessment?serverTimezone=UTC
     username: neel
     password: alskdjfh123!
+logging:
+  level:
+    root: info
+  file:
+    name: assessment.log
