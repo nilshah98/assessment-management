@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
 @RestController
 public class ExamResource {
 
-    // Repositories
+//     Repositories
     private final ResultRepository resultRepository;
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
@@ -32,74 +32,82 @@ public class ExamResource {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/api/exam/{quizId}")
-    public Map<String, Object> getExam(@PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
+    @GetMapping("/api/exams")
+    public List<Quiz> getAllExams(){
+        List<Quiz> quizes = StreamSupport.stream(quizRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+
+//        Make each correct option -1
+        for(Quiz q: quizes){
+            for(Question que: q.getQuestions()){
+                que.setCorrectOption(null);
+            }
+        }
+        return quizes;
+    }
+
+    @GetMapping("/api/exam/result/{quizId}")
+    public Result getResult(@PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
         String userId = (String) principal.getAttribute("sub");
-        Map<String, Object> res =  new HashMap<>();
+//        Initially no results found
+        Result res = new Result(quizId, -1L, -1L);
+
+        for(Result r : resultRepository.findAll()){
+            if(r.getQuizId().equals(quizId) && r.getUser().getId().equals(userId)){
+                res = r;
+                break;
+            }
+        }
+        return res;
+    }
+
+    @GetMapping("/api/exam/{quizId}")
+    public Quiz getExam(@PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
+        String userId = (String) principal.getAttribute("sub");
         boolean userHasTakenTest = false;
+        Quiz exam = new Quiz();
 
 //        Check in result, whether userId with the said quizId
         for(Result r : resultRepository.findAll()) {
             if(r.getQuizId().equals(quizId) && r.getUser().getId().equals(userId)){
-                res.put("id", r.getId());
-                res.put("quizId", r.getQuizId());
-                res.put("score", r.getScore());
-                res.put("total", r.getTotal());
+                exam = new Quiz("Test already taken", "Can take test only once, check results");
+                exam.setId(-1L);
                 userHasTakenTest = true;
+                break;
             }
         }
 
-//        Check if r is null, if yes, generate questions for given quiz
-        if(!userHasTakenTest){
-            Quiz quiz = quizRepository.findById(quizId).get();
-            res.put("id",quiz.getId());
-            res.put("title",quiz.getTitle());
-            res.put("description",quiz.getDescription());
-
-            res.put("questions", new ArrayList<Map<String, Object>>());
-//            Inserting questions
-            for(Question q: quiz.getQuestions()){
-                // Creating new object
-                Map<String, Object> temp = new HashMap<>();
-                temp.put("description", q.getDescription());
-                temp.put("id", q.getId());
-
-                // Adding each option
-                List<String> ops = new ArrayList<String>();
-                for (Option o : (List<Option>) q.getOptions())
-                {ops.add(o.getData());}
-
-                temp.put("options",ops);
-                // Field to mark users response
-                temp.put("response",null);
-
-//                Inserting in res
-                ((ArrayList<Map<String, Object>>)res.get("questions")).add(temp);
-            }
+//        Check if user has not taken exam, generate exam, ie. remove correct option
+        if(!userHasTakenTest) {
+            exam = quizRepository.findById(quizId).get();
+//            Loop through questions and allot correctOption as -1
+            for(Question q : exam.getQuestions()){ q.setCorrectOption(null); }
         }
 
-        return res;
+        return exam;
     }
 
+
     @PostMapping("/api/exam/{quizId}")
-    public Result evalExam(@RequestBody Map<String, Object> body, @PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
+    public Result evalExam(@RequestBody Quiz exam, @PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
 //        Extract userId
         String userId = (String) principal.getAttribute("sub");
 
 //        Extract questions
-        List<HashMap<String, Long>> questions = (List<HashMap<String, Long>>) body.get("questions");
+        Set<Question> questions = exam.getQuestions();
 //        Get total number of questions
         Long total = (long) questions.size();
 //        Now check each answer
 
         Long score = 0L;
-        for (HashMap<String, Long> q : questions){
+        for (Question q : questions){
 //            Get correctOption for question
-            Long qid = ((Number) q.get("id")).longValue();
+            Long qid = q.getId();
             Question currQ = questionRepository.findById(qid).get();
-            // Take care response is 0 indexed, so need to subtract 1 while checking
 
-            if(currQ.getCorrectOption()-1 == ((Number) q.get("response")).longValue()) score += 1;
+//            Note that user input stored in correctOption
+//            Take care response is 0 indexed, so need to subtract 1 while checking
+            if(currQ.getCorrectOption()-1 == q.getCorrectOption()) score += 1;
         }
 
         Result result = new Result(quizId, score, total);
