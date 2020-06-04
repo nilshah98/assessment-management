@@ -90,7 +90,6 @@ public class Result {
                 "id=" + id +
                 ", quizId=" + quizId +
                 ", score=" + score +
-                ", user=" + user +
                 '}';
     }
 }

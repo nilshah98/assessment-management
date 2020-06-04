@@ -8,6 +8,7 @@ import com.accolite.assessmentmanagement.repository.ResultRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class ExamService {
 
 
 
-    public Result getResultByQuiIdAndUserId(Long quizId, String userId){
+    public Result getResultByQuizIdAndUserId(Long quizId, String userId){
         Result result = new Result(quizId, -1L, -1L);
         for(Result r : getAllResults()){
             if(r.getQuizId().equals(quizId) && r.getUser().getId().equals(userId)){
@@ -77,7 +78,7 @@ public class ExamService {
         boolean userHasTakenTest = true;
         Quiz exam = new Quiz();
 
-        Result res = getResultByQuiIdAndUserId(quizId, userId);
+        Result res = getResultByQuizIdAndUserId(quizId, userId);
         if(res.getScore().equals(-1L)) userHasTakenTest = false;
 
         if(userHasTakenTest) {
@@ -106,7 +107,7 @@ public class ExamService {
         for (Question q : questions){
 //            Get correctOption for question
             Long qid = q.getId();
-            Question currQ = questionService.getQuestionById(quizId);
+            Question currQ = questionService.getQuestionById(qid);
 
 //            Note that user input stored in correctOption
 //            Take care response is 0 indexed, so need to subtract 1 while checking
@@ -126,7 +127,24 @@ public class ExamService {
 
     }
 
+    public Float getPercentileByQuizIdAndUserId(Long quizId, String userId){
+//        Get particular result
+        Result res = getResultByQuizIdAndUserId(quizId, userId);
 
 
+//        Get results of everyone taking that quiz
+        List<Result> results = getAllResults().stream()
+                                .filter(r -> r.getQuizId().equals(quizId))
+                                .collect(Collectors.toList());
+
+//        Now sort results by score in ascending order
+        results.sort((r1, r2) -> (int) (r1.getScore() - r2.getScore()));
+
+//        Find location of res in results
+        int rank = results.indexOf(res);
+
+//        finally percentile
+        return (float) ((rank+1)*100)/results.size();
+    }
 
 }

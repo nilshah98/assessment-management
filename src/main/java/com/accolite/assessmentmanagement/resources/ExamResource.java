@@ -12,7 +12,8 @@ import java.util.List;
 @RestController
 public class ExamResource {
 
-//     Repositories
+//     Services
+
     private final ExamService examService;
 
 //    Constructor
@@ -28,7 +29,7 @@ public class ExamResource {
     @GetMapping("/api/exam/result/{quizId}")
     public Result getResult(@PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
         String userId = (String) principal.getAttribute("sub");
-        return examService.getResultByQuiIdAndUserId(quizId, userId);
+        return examService.getResultByQuizIdAndUserId(quizId, userId);
     }
 
     @GetMapping("/api/exam/{quizId}")
@@ -42,6 +43,11 @@ public class ExamResource {
     public Result evalExam(@RequestBody Quiz exam, @PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
         String userId = (String) principal.getAttribute("sub");
         return examService.evaluateExam(exam, quizId, userId);
+    }
 
+    @GetMapping("/api/exam/percentile/{quizId}")
+    public Float getPercentile(@PathVariable Long quizId, @AuthenticationPrincipal OAuth2User principal){
+        String userId = (String) principal.getAttribute("sub");
+        return examService.getPercentileByQuizIdAndUserId(quizId, userId);
     }
 }
