@@ -131,20 +131,24 @@ public class ExamService {
 //        Get particular result
         Result res = getResultByQuizIdAndUserId(quizId, userId);
 
-
-//        Get results of everyone taking that quiz
-        List<Result> results = getAllResults().stream()
-                                .filter(r -> r.getQuizId().equals(quizId))
-                                .collect(Collectors.toList());
+        if(res.getId() != null){
+            //        Get results of everyone taking that quiz
+            List<Result> results = getAllResults().stream()
+                    .filter(r -> r.getQuizId().equals(quizId))
+                    .collect(Collectors.toList());
 
 //        Now sort results by score in ascending order
-        results.sort((r1, r2) -> (int) (r1.getScore() - r2.getScore()));
+            results.sort((r1, r2) -> (int) (r1.getScore() - r2.getScore()));
 
 //        Find location of res in results
-        int rank = results.indexOf(res);
+            int rank = results.indexOf(res);
 
 //        finally percentile
-        return (float) ((rank+1)*100)/results.size();
+            return (float) ((rank+1)*100)/results.size();
+        }
+        else{
+            return (float) 0;
+        }
     }
 
 }
