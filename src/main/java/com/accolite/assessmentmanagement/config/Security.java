@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,8 +19,7 @@ public class Security extends WebSecurityConfigurerAdapter {
         // @formatter:off
         http.cors().and()
                 .csrf()
-                .disable()
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .authorizeRequests(a -> a
                         .antMatchers("/", "/error", "/webjars/**","/oauth2/**","/*.css","/*.js*","/assets/**","/test/**").permitAll()
                         .anyRequest().authenticated()
